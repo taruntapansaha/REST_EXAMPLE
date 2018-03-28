@@ -25,7 +25,13 @@ public class UserResourceController {
 
 	@GetMapping("/users/{id}")
 	public User findUserByID(@PathVariable int id) {
-		return theService.findById(id);
+		User user = theService.findById(id);
+		
+		if(user==null) {
+			throw new UserNotFoundException("id " + id);
+		}
+		
+		return user;
 
 	}
 
