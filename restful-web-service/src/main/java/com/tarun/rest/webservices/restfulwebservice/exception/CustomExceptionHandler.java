@@ -20,9 +20,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler{
 				request.getDescription(true));
 		return new ResponseEntity(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
-	
-	
+	 
 	@ExceptionHandler(com.tarun.rest.webservices.restfulwebservice.user.UserNotFoundException.class)
 	public final ResponseEntity<Object> UserNotFoundException(Exception ex, WebRequest request) {
 		ExceptionResponse response = new ExceptionResponse(new Date(), ex.getMessage(), 
