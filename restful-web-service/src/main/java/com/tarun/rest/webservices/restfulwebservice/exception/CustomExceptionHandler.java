@@ -6,7 +6,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +24,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(com.tarun.rest.webservices.restfulwebservice.user.UserNotFoundException.class)
 	public final ResponseEntity<Object> UserNotFoundException(Exception ex, WebRequest request) {
-		ExceptionResponse response = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(true));
+		ExceptionResponse response = new ExceptionResponse(new Date(), "User not found", request.getDescription(true));
 		return new ResponseEntity(response, HttpStatus.NOT_FOUND);
 	}
 

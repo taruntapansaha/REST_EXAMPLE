@@ -2,6 +2,7 @@ package com.tarun.rest.webservices.restfulwebservice.user;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -16,30 +17,30 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-public class UserResourceController {
+public class UserJpaResourceController {
 
 	@Autowired
-	private UserDaoService theService;
+	private UserRepository repository;
 
-	@GetMapping("/users")
+	@GetMapping("/jpa/users")
 	public List<User> retrieveAllUsers() {
-		return theService.findAll();
+		return repository.findAll();
 	}
 
-	@GetMapping("/users/{id}")
-	public User findUserByID(@PathVariable long id) {
-		User user = theService.findById(id);
+	@GetMapping("/jpa/users/{id}")
+	public Optional<User> findUserByID(@PathVariable long id) {
+		Optional<User> user = repository.findById(id);
 		
-		if(user==null) {
+		if(!user.isPresent()) {
 			throw new UserNotFoundException("id " + id);
 		}
 		
 		return user;
 	}
 
-	@PostMapping("/users")
+	@PostMapping("/jpa/users")
 	public ResponseEntity<Object> addUser(@Valid @RequestBody User user) {
-		User savedUser = theService.addUser(user);
+		User savedUser = repository.save(user);
 		
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 									.path("/{id}")
@@ -49,12 +50,8 @@ public class UserResourceController {
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@DeleteMapping("/users/{id}")
-	public void deleteUser(@PathVariable int id) {
-		User deletedUser = theService.deleteById(id);
-		
-		if(deletedUser==null) {
-			throw new UserNotFoundException("Invalid ID");
-		}
+	@DeleteMapping("/jpa/users/{id}")
+	public void deleteUser(@PathVariable Long id) {
+		repository.deleteById(id);
 	}
 }

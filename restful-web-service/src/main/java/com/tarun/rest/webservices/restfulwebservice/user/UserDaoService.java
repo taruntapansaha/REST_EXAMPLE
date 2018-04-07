@@ -11,20 +11,20 @@ import org.springframework.stereotype.Component;
 public class UserDaoService {
 	
 	private static List<User> userList = new ArrayList<>();
-	private int userCount = 4;
+	private long userCount = 4;
 	
 	static {
-		userList.add(new User(1, "Lindsey Brook", new Date()));
-		userList.add(new User(2, "John Cena", new Date()));
-		userList.add(new User(3, "Tony Stark", new Date()));
-		userList.add(new User(4, "Alexia Texas", new Date()));
+		userList.add(new User(1L, "Lindsey Brook", new Date()));
+		userList.add(new User(2L, "John Cena", new Date()));
+		userList.add(new User(3L, "Tony Stark", new Date()));
+		userList.add(new User(4L, "Alexia Texas", new Date()));
 	}
 	
  	public List<User> findAll(){
  		return userList;
  	}
  	
- 	public User findById(int id) {
+ 	public User findById(Long id) {
  		for(User user: userList) {
  			if(user.getId() == id) {
  				return user;
