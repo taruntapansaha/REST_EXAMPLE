@@ -1,9 +1,12 @@
 package com.tarun.rest.webservices.restfulwebservice.user;
 
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
@@ -20,8 +23,8 @@ public class User {
 	@Past
 	private Date birthDate;
 	
-	//@OneToMany(mappedBy="posts")
-	//private List<Post> posts;
+	@OneToMany(mappedBy="user")
+	private List<Post> posts;
 	
 	public User() {	}
 	
@@ -51,7 +54,6 @@ public class User {
 		this.birthDate = birthDate;
 	}
 	
-	/*
 	public List<Post> getPosts() {
 		return posts;
 	}
@@ -59,9 +61,7 @@ public class User {
 	public void setPosts(List<Post> posts) {
 		this.posts = posts;
 	}
-*/
 
-	
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", birthDate=" + birthDate + "]";

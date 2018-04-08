@@ -21,6 +21,9 @@ public class UserJpaResourceController {
 
 	@Autowired
 	private UserRepository repository;
+	
+	@Autowired
+	private PostRepository postRepository;
 
 	@GetMapping("/jpa/users")
 	public List<User> retrieveAllUsers() {
@@ -37,7 +40,18 @@ public class UserJpaResourceController {
 		
 		return user;
 	}
-
+	
+	@GetMapping("/jpa/users/{id}/posts")
+	public List<Post> retrieveUserPosts(@PathVariable long id) {
+		Optional<User> user = repository.findById(id);
+		
+		if(!user.isPresent()) {
+			throw new UserNotFoundException("id " + id);
+		}
+		
+		return user.get().getPosts();
+	}
+	
 	@PostMapping("/jpa/users")
 	public ResponseEntity<Object> addUser(@Valid @RequestBody User user) {
 		User savedUser = repository.save(user);
@@ -45,6 +59,27 @@ public class UserJpaResourceController {
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 									.path("/{id}")
 									.buildAndExpand(savedUser.getId())
+									.toUri();
+		
+		return ResponseEntity.created(uri).build();
+	}
+	
+	@PostMapping("/jpa/users/{id}/posts")
+	public ResponseEntity<Object> createPost(@PathVariable long id, @RequestBody Post post) {
+		
+		Optional<User> userOptional = repository.findById(id);
+		
+		if(!userOptional.isPresent()) {
+			throw new UserNotFoundException("id -" + id);
+		}
+		User user = userOptional.get();
+		
+		post.setUser(user);
+		postRepository.save(post);
+		
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+									.path("/{id}")
+									.buildAndExpand(post.getId())
 									.toUri();
 		
 		return ResponseEntity.created(uri).build();
