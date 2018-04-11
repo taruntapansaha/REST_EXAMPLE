@@ -6,7 +6,11 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,25 +35,31 @@ public class UserJpaResourceController {
 	}
 
 	@GetMapping("/jpa/users/{id}")
-	public Optional<User> findUserByID(@PathVariable long id) {
-		Optional<User> user = repository.findById(id);
+	public Resource<User> findUserByID(@PathVariable long id) {
+		Optional<User> userOptional = repository.findById(id);
 		
-		if(!user.isPresent()) {
+		if(!userOptional.isPresent()) {
 			throw new UserNotFoundException("id " + id);
 		}
 		
-		return user;
+		User user = userOptional.get();
+		Resource<User> resource = new Resource<User>(user);
+		
+		ControllerLinkBuilder linkTo = linkTo(methodOn(this.getClass()).retrieveAllUsers());
+		
+		resource.add(linkTo.withRel("All-users"));
+		return resource;
 	}
 	
 	@GetMapping("/jpa/users/{id}/posts")
 	public List<Post> retrieveUserPosts(@PathVariable long id) {
-		Optional<User> user = repository.findById(id);
+		Optional<User> userOptional = repository.findById(id);
 		
-		if(!user.isPresent()) {
+		if(!userOptional.isPresent()) {
 			throw new UserNotFoundException("id " + id);
 		}
 		
-		return user.get().getPosts();
+		return userOptional.get().getPosts();
 	}
 	
 	@PostMapping("/jpa/users")
